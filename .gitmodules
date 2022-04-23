@@ -1,0 +1,3 @@
+[submodule "TelegramSkeleton"]
+	path = TelegramSkeleton
+	url = git@github.com:derigel23/TelegramSkeleton.git

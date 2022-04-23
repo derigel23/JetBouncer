@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JetBouncer", "JetBouncer\JetBouncer.csproj", "{D371A929-20B7-4855-978E-9EF0129BB306}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramSkeleton", "TelegramSkeleton\TelegramSkeleton.csproj", "{1C55B9B4-42B2-4192-860A-8154AA728271}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D371A929-20B7-4855-978E-9EF0129BB306}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D371A929-20B7-4855-978E-9EF0129BB306}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D371A929-20B7-4855-978E-9EF0129BB306}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D371A929-20B7-4855-978E-9EF0129BB306}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C55B9B4-42B2-4192-860A-8154AA728271}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C55B9B4-42B2-4192-860A-8154AA728271}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C55B9B4-42B2-4192-860A-8154AA728271}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C55B9B4-42B2-4192-860A-8154AA728271}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
