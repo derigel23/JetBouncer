@@ -7,13 +7,13 @@ using Telegram.Bot.Types;
 
 namespace JetBouncer;
 
-public class StatusController : StatusController<object, bool?, BotCommandAttribute>
+public class StatusController : StatusController<object, bool?, IBotCommandHandlerAttribute<object>>
 {
   private readonly IMemoryCache myMemoryCache;
   private readonly IDictionary<long, ITelegramBotClient> myBots;
 
-  public StatusController(IMemoryCache memoryCache, IDictionary<long, ITelegramBotClient> bots, IEnumerable<IStatusProvider> statusProviders, IEnumerable<Lazy<Func<Message, IBotCommandHandler<object, bool?>>, BotCommandAttribute>> commandHandlers)
-    : base(null, bots.Values, statusProviders, commandHandlers)
+  public StatusController(IMemoryCache memoryCache, IDictionary<long, ITelegramBotClient> bots, IEnumerable<IStatusProvider> statusProviders)
+    : base(null, bots.Values, statusProviders, null)
   {
     myMemoryCache = memoryCache;
     myBots = bots;
