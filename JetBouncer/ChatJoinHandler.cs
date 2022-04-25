@@ -34,7 +34,7 @@ public class ChatJoinHandler : IUpdateHandler
             string.Equals(messageEntity.Value.ToString(), "/start", StringComparison.OrdinalIgnoreCase))
         {
           await myBot.SendVideoAsync(message.Chat, "https://telegram.org/file/464001508/10265/9s2PGXyzQW0.3317857.mp4/f2d60efe6ca5d1fae2",
-            caption: "Add me to the necessary group or channel as an administrator", cancellationToken: cancellationToken);
+            caption: "Add me to the necessary group or channel as an administrator with \"Invite Users via Link\" admin rights.", cancellationToken: cancellationToken);
           return true;
         }
       }
