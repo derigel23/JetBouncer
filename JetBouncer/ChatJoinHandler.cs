@@ -25,7 +25,7 @@ public class ChatJoinHandler : IUpdateHandler
   
   public async Task<bool?> Handle(Update data, OperationTelemetry? context = default, CancellationToken cancellationToken = default)
   {
-    if (data.ChatJoinRequest is {} chatJoinRequest)
+    if (data.ChatJoinRequest is { InviteLink.Creator: {} invitationCreator  } chatJoinRequest && invitationCreator.Id == myBot.BotId)
     {
       var authId = Random.Shared.NextInt64();
       myMemoryCache.Set(authId, chatJoinRequest);
