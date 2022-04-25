@@ -5,6 +5,7 @@ using Team23.TelegramSkeleton;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace JetBouncer;
 
@@ -28,15 +29,16 @@ public class ChatJoinHandler : IUpdateHandler
     {
       var authId = Random.Shared.NextInt64();
       myMemoryCache.Set(authId, chatJoinRequest);
-      var authLink = myUrlHelper.ActionLink("Auth", "Status", new { authId, myBot.BotId });
-      await myBot.SendTextMessageAsync(chatJoinRequest.From.Id, authLink, cancellationToken: cancellationToken);
+      IReplyMarkup markup = new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl("Authorize",
+        myUrlHelper.ActionLink("Auth", "Status", new { authId, myBot.BotId })!));
+      await myBot.SendTextMessageAsync(chatJoinRequest.From.Id, "Please, authorize to get access.", replyMarkup: markup, cancellationToken: cancellationToken);
       return true;
     }
 
     if (data.MyChatMember is { } myMember)
     {
 
-      if (myMember.NewChatMember is ChatMemberAdministrator { CanInviteUsers: true } administrator)
+      if (myMember.NewChatMember is ChatMemberAdministrator { CanInviteUsers: true })
       {
         var inviteLink = await myBot.CreateChatInviteLinkAsync(myMember.Chat, createsJoinRequest: true, cancellationToken: cancellationToken);
         await myBot.SendTextMessageAsync(myMember.Chat.Id, inviteLink.InviteLink, cancellationToken: cancellationToken);
