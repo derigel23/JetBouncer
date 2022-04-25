@@ -9,7 +9,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace JetBouncer;
 
-[UpdateHandler(UpdateTypes = new[] { UpdateType.ChatJoinRequest, UpdateType.MyChatMember })]
+[UpdateHandler(UpdateTypes = new[] { UpdateType.ChatJoinRequest, UpdateType.MyChatMember, UpdateType.Message })]
 public class ChatJoinHandler : IUpdateHandler
 {
   private readonly ITelegramBotClient myBot;
@@ -25,6 +25,21 @@ public class ChatJoinHandler : IUpdateHandler
   
   public async Task<bool?> Handle(Update data, OperationTelemetry? context = default, CancellationToken cancellationToken = default)
   {
+    if (data.Message is { Entities: { Length: > 0 } entities } message)
+    {
+      foreach (var entity in entities)
+      {
+        var messageEntity = new MessageEntityEx(message, entity);
+        if (messageEntity.Type == MessageEntityType.BotCommand &&
+            string.Equals(messageEntity.Value.ToString(), "/start", StringComparison.OrdinalIgnoreCase))
+        {
+          await myBot.SendVideoAsync(message.Chat, "https://telegram.org/file/464001508/10265/9s2PGXyzQW0.3317857.mp4/f2d60efe6ca5d1fae2",
+            caption: "Add me to the necessary group or channel as an administrator", cancellationToken: cancellationToken);
+          return true;
+        }
+      }
+    }
+    
     if (data.ChatJoinRequest is { InviteLink.Creator: {} invitationCreator  } chatJoinRequest && invitationCreator.Id == myBot.BotId)
     {
       var authId = Random.Shared.NextInt64();
