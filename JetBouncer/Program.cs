@@ -1,17 +1,17 @@
-using System.Security.Claims;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using JetBrains.Space.AspNetCore.Authentication;
-using JetBrains.Space.AspNetCore.Authentication.Experimental.TokenManagement;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Options;
 using JetBouncer;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.WebUtilities;
 using Team23.TelegramSkeleton;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,12 +40,40 @@ builder.Services
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = SpaceDefaults.AuthenticationScheme;
   })
-  .AddCookie()
+  .AddCookie(options =>
+  {
+    options.ExpireTimeSpan = TimeSpan.FromSeconds(10);
+    options.SlidingExpiration = true;
+  })
   .AddSpace(options =>
   {
-    builder.Configuration.Bind("Space", options);
+    builder.Configuration.Bind(SpaceDefaults.AuthenticationScheme, options);
     options.RequestCredentials = RequestCredentials.Required;
     options.AccessType = AccessType.Online;
+    options.Events.OnRemoteFailure += async context =>
+    {
+      // handling switching browsers during authorization
+      if (context.Failure is { Message: "Correlation failed." })
+      {
+        if (context.Properties?.RedirectUri is {} redirect)
+        {
+          var redirectUri = new Uri(context.Request.GetUri(), redirect);
+          var query = QueryHelpers.ParseQuery(redirectUri.Query);
+          if (query.TryAdd("once", ""))
+          {
+            context.Properties.RedirectUri = new UriBuilder(redirectUri) { Query = new QueryBuilder(query).ToString() }.ToString();
+
+            if (await context.HttpContext.RequestServices.GetRequiredService<IAuthenticationHandlerProvider>()
+                  .GetHandlerAsync(context.HttpContext, SpaceDefaults.AuthenticationScheme) is SpaceHandler handler)
+            {
+              context.HandleResponse();
+              handler.Options.RequestCredentials = RequestCredentials.Default;
+              await handler.ChallengeAsync(context.Properties);
+            }
+          }
+        }
+      }
+    };
   });  
 
 builder.Services
