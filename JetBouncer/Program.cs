@@ -50,6 +50,7 @@ builder.Services
     builder.Configuration.Bind(SpaceDefaults.AuthenticationScheme, options);
     options.RequestCredentials = RequestCredentials.Required;
     options.AccessType = AccessType.Online;
+    options.Scope.Add("Profile:ViewProfile");
     options.Events.OnRemoteFailure += async context =>
     {
       // handling switching browsers during authorization
