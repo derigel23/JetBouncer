@@ -32,4 +32,16 @@ public class StatusController : StatusController<object, bool?, IBotCommandHandl
 
     return NotFound();
   }
+
+  public override async Task<IActionResult> Refresh(CancellationToken cancellationToken)
+  {
+    var result = await base.Refresh(cancellationToken);
+    foreach (var bot in myBots.Values)
+    {
+      var administratorRights = new ChatAdministratorRights { CanManageChat = true, CanInviteUsers = true };
+      await bot.SetMyDefaultAdministratorRightsAsync(administratorRights, false, cancellationToken);
+      await bot.SetMyDefaultAdministratorRightsAsync(administratorRights, true, cancellationToken);
+    }
+    return result;
+  }
 }

@@ -33,9 +33,16 @@ public class ChatJoinHandler : IUpdateHandler
         if (messageEntity.Type == MessageEntityType.BotCommand &&
             string.Equals(messageEntity.Value.ToString(), "/start", StringComparison.OrdinalIgnoreCase))
         {
-          await myBot.SendVideoAsync(message.Chat.Id, "https://telegram.org/file/464001508/10265/9s2PGXyzQW0.3317857.mp4/f2d60efe6ca5d1fae2",
-            caption: "Add me to the necessary group or channel as an administrator with \"Invite Users via Link\" admin rights.", cancellationToken: cancellationToken);
-          return true;
+          if (messageEntity.AfterValue.Length == 0)
+          {
+            var botInfo = await myBot.GetMeAsync(cancellationToken);
+            var addLink = new Uri($"https://t.me/{botInfo.Username}?startgroup=init&admin=invite_users");
+            await myBot.SendVideoAsync(message.Chat.Id, "https://telegram.org/file/464001508/10265/9s2PGXyzQW0.3317857.mp4/f2d60efe6ca5d1fae2",
+              caption: "Add me to the necessary group or channel as an administrator with \"Invite Users via Link\" rights.",
+              replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl("Add me", addLink.AbsoluteUri)),
+              cancellationToken: cancellationToken);
+            return true;
+          }
         }
       }
     }
