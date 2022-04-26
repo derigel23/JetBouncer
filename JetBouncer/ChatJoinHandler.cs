@@ -33,7 +33,7 @@ public class ChatJoinHandler : IUpdateHandler
         if (messageEntity.Type == MessageEntityType.BotCommand &&
             string.Equals(messageEntity.Value.ToString(), "/start", StringComparison.OrdinalIgnoreCase))
         {
-          await myBot.SendVideoAsync(message.Chat, "https://telegram.org/file/464001508/10265/9s2PGXyzQW0.3317857.mp4/f2d60efe6ca5d1fae2",
+          await myBot.SendVideoAsync(message.Chat.Id, "https://telegram.org/file/464001508/10265/9s2PGXyzQW0.3317857.mp4/f2d60efe6ca5d1fae2",
             caption: "Add me to the necessary group or channel as an administrator with \"Invite Users via Link\" admin rights.", cancellationToken: cancellationToken);
           return true;
         }
@@ -55,7 +55,7 @@ public class ChatJoinHandler : IUpdateHandler
 
       if (myMember.NewChatMember is ChatMemberAdministrator { CanInviteUsers: true })
       {
-        var inviteLink = await myBot.CreateChatInviteLinkAsync(myMember.Chat, createsJoinRequest: true, cancellationToken: cancellationToken);
+        var inviteLink = await myBot.CreateChatInviteLinkAsync(myMember.Chat.Id, createsJoinRequest: true, cancellationToken: cancellationToken);
         await myBot.SendTextMessageAsync(myMember.Chat.Id, inviteLink.InviteLink, cancellationToken: cancellationToken);
       }
       else if (myMember.NewChatMember.Status is ChatMemberStatus.Member or ChatMemberStatus.Administrator)
